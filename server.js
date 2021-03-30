@@ -9,9 +9,8 @@ let ports = [443, 80];
 const app = express();
 app.use(blacklist.blockRequests('blacklist.txt'));
 app.use(expressDefend.protect({
-    maxAttempts: 1,
+    maxAttempts: 0,
     dropSuspiciousRequest: true,
-    logFile: 'suspicious.log',
     onMaxAttemptsReached: function(ipAddress, url){
         console.log(`${ipAddress} has been blacklisted.`)
         blacklist.addAddress(ipAddress);
