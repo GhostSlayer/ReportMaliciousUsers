@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/DangerousUserPrevention" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DrivetAPIBot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/EetuBot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ImageAPI" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/JDABot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Website" vcs="Git" />
+  </component>
+</project>
