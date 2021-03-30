@@ -7,7 +7,8 @@ let ports = [443, 80];
 const app = express();
 
 app.use('/', async (req, res) => {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    ip = ip.split(':').pop();
     console.log(ip); // ip address of the user
 
     if (ip === '91.156.42.96') {
