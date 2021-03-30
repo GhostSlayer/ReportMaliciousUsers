@@ -32,7 +32,7 @@ app.use('/', async (req, res) => {
         headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
     })
 
-    return sendStatus(404)
+    return res.sendStatus(404)
 })
 
 app.use('/ue1r0t2p1ng', (req, res) => {
