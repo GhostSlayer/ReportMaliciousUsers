@@ -13,6 +13,7 @@ app.use(expressDefend.protect({
     dropSuspiciousRequest: true,
     logFile: 'suspicious.log',
     onMaxAttemptsReached: function(ipAddress, url){
+        console.log(`${ipAddress} has been blacklisted.`)
         blacklist.addAddress(ipAddress);
     }
 }));
