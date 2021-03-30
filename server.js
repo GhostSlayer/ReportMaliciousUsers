@@ -16,16 +16,27 @@ app.use('/', async (req, res) => {
         return;
     }
 
-    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Trying to access port 80 or 443&categories=14`, {
+    if (req.headers.host.includes('443')) {
+        console.log('Attempt to connect to port 443')
+        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Trying to access port 443&categories=14`, {
+            method: 'post',
+            headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
+        })
+
+        return res.sendStatus(404)
+    }
+
+    console.log('Attempt to connect to port 80')
+    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Trying to access port 80&categories=14`, {
         method: 'post',
         headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
     })
 
-    res.sendStatus(404)
+    return sendStatus(404)
 })
 
 app.use('/ue1r0t2p1ng', (req, res) => {
-    res.sendStatus(200)
+    return res.sendStatus(200)
 })
 
 
