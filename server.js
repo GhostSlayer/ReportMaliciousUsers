@@ -1,10 +1,21 @@
 require('dotenv').config()
 const express = require('express');
 const fetch = require('node-fetch');
+const blacklist = require('express-blacklist');
+const expressDefend = require('express-defend');
 
 let ports = [443, 80];
 
 const app = express();
+app.use(blacklist.blockRequests('blacklist.txt'));
+app.use(expressDefend.protect({
+    maxAttempts: 1,
+    dropSuspiciousRequest: true,
+    logFile: 'suspicious.log',
+    onMaxAttemptsReached: function(ipAddress, url){
+        blacklist.addAddress(ipAddress);
+    }
+}));
 
 app.use('/', async (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
