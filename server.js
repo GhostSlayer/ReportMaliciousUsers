@@ -24,6 +24,10 @@ app.use('/', async (req, res) => {
     res.sendStatus(404)
 })
 
+app.use('/ue1r0t2p1ng', (req, res) => {
+    res.sendStatus(200)
+})
+
 
 ports.forEach(function(port) {
     app.listen(port);
