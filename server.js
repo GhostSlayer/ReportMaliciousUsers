@@ -8,7 +8,7 @@ let ports = [443, 80];
 const app = express();
 
 app.use('/', async (req, res) => {
-    const clientIp = requestIp.getClientIp(req);
+    const clientIp = requestIp.getClientIp(req).replace('::ffff:', '');
 
     if (clientIp === '91.156.42.96') {
         res.redirect('192.168.1.1')
