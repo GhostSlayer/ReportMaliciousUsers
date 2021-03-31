@@ -2,24 +2,17 @@ require('dotenv').config()
 const express = require('express');
 const fetch = require('node-fetch');
 const blacklist = require('express-blacklist');
-const expressDefend = require('express-defend');
 
-let ports = [443, 80];
+let ports = [443, 80, 8080];
 
 const app = express();
 app.use(blacklist.blockRequests('blacklist.txt'));
-app.use(expressDefend.protect({
-    maxAttempts: 0,
-    dropSuspiciousRequest: true,
-    onMaxAttemptsReached: function(ipAddress, url){
-        console.log(`${ipAddress} has been blacklisted.`)
-        blacklist.addAddress(ipAddress);
-    }
-}));
 
 app.use('/', async (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    ip = ip.split(':').pop();
+    if (ip.substr(0, 7) === "::ffff:") {
+        ip = ip.substr(7)
+    }
     console.log(ip); // ip address of the user
 
     if (ip === '91.156.42.96') {
@@ -27,9 +20,11 @@ app.use('/', async (req, res) => {
         return;
     }
 
+    blacklist.addAddress(ip)
+
     if (req.headers.host.includes('443')) {
-        console.log('Attempt to connect to port 443')
-        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Trying to access port 443&categories=14`, {
+        console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 443`)
+        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 443&categories=14`, {
             method: 'post',
             headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
         })
@@ -37,8 +32,18 @@ app.use('/', async (req, res) => {
         return res.sendStatus(404)
     }
 
-    console.log('Attempt to connect to port 80')
-    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Trying to access port 80&categories=14`, {
+    if (req.headers.host.includes('8080')) {
+        console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 8080`)
+        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 8080&categories=14`, {
+            method: 'post',
+            headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
+        })
+
+        return res.sendStatus(404)
+    }
+
+    console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 80`)
+    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 80&categories=14`, {
         method: 'post',
         headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
     })
