@@ -20,7 +20,7 @@ app.use('/', async (req, res) => {
         return;
     }
 
-    blacklist.addAddress(ip)
+    blacklist.addAddress('::ffff:' + ip)
 
     if (req.headers.host.includes('443')) {
         console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 443`)
