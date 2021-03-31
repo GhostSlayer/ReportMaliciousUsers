@@ -8,12 +8,12 @@ let ports = [443, 80, 8080];
 const app = express();
 app.use(blacklist.blockRequests('blacklist.txt'));
 
+
 app.use('/', async (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     if (ip.substr(0, 7) === "::ffff:") {
         ip = ip.substr(7)
     }
-    console.log(ip); // ip address of the user
 
     if (ip === '91.156.42.96') {
         res.redirect('http://192.168.1.1')
@@ -50,11 +50,6 @@ app.use('/', async (req, res) => {
 
     return res.sendStatus(404)
 })
-
-app.use('/ue1r0t2p1ng', (req, res) => {
-    return res.sendStatus(200)
-})
-
 
 ports.forEach(function(port) {
     app.listen(port);
