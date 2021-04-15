@@ -11,6 +11,9 @@ app.use(blacklist.blockRequests('blacklist.txt'));
 
 app.use('/', async (req, res) => {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let letter = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 1).toUpperCase()
+    let port;
+
     if (ip.substr(0, 7) === "::ffff:") {
         ip = ip.substr(7)
     }
@@ -22,28 +25,10 @@ app.use('/', async (req, res) => {
 
     blacklist.addAddress('::ffff:' + ip)
 
-    if (req.headers.host.includes('443')) {
-        console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 443`)
-        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 443&categories=14`, {
-            method: 'post',
-            headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
-        })
+    if (req.headers.host.includes('443')) port = 443
+    if (req.headers.host.includes('8080')) port = 8080
 
-        return res.sendStatus(404)
-    }
-
-    if (req.headers.host.includes('8080')) {
-        console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 8080`)
-        await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 8080&categories=14`, {
-            method: 'post',
-            headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
-        })
-
-        return res.sendStatus(404)
-    }
-
-    console.log(`Unauthorized connection attempt detected from IP address ${ip} to port 80`)
-    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected to port 80&categories=14`, {
+    await fetch(`https://api.abuseipdb.com/api/v2/report?ip=${ip}&comment=Unauthorized connection attempt detected from IP address ${ip} to port ${port ? port : '80'} [${letter}]&categories=14`, {
         method: 'post',
         headers: { 'Key': process.env.ABUSEIPDB_API_KEY }
     })
