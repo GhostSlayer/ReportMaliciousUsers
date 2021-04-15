@@ -18,7 +18,7 @@ app.use('/', async (req, res) => {
         ip = ip.substr(7)
     }
 
-    if (ip === '91.156.42.96') {
+    if (ip === process.env.IP) {
         res.redirect('http://192.168.1.1')
         return;
     }
